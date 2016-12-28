@@ -1,0 +1,6 @@
+MINI2440 BOARD
+M:	Joseph <he19880406@126.com>
+S:	Maintained
+F:	board/samsung/mini2440/
+F:	include/configs/mini2440.h
+F:	configs/mini2440_defconfig

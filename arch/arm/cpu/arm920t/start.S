@@ -57,7 +57,8 @@ copyex:
 #  define pWTCON	0x15300000
 #  define INTMSK	0x14400008	/* Interrupt-Controller base addresses */
 #  define CLKDIVN	0x14800014	/* clock divisor register */
-#else
+#  define INTSUBMSK	0x4A00001C
+#elif defined(CONFIG_S3C2440) || defined(CONFIG_S3C2410)
 #  define pWTCON	0x53000000
 #  define INTMSK	0x4A000008	/* Interrupt-Controller base addresses */
 #  define INTSUBMSK	0x4A00001C
@@ -78,6 +79,10 @@ copyex:
 	ldr	r1, =0x3ff
 	ldr	r0, =INTSUBMSK
 	str	r1, [r0]
+# elif defined(CONFIG_S3C2440)
+	ldr	r1, =0x7ff
+	ldr	r0, =INTSUBMSK
+	str	r1, [r0]
 # endif
 
 	/* FCLK:HCLK:PCLK = 1:2:4 */
@@ -95,6 +100,9 @@ copyex:
 	bl	cpu_init_crit
 #endif
 
+#ifdef CONFIG_MINI2440_ASM_PRINT
+	bl 	print_init_log
+#endif
 	bl	_main
 
 /*------------------------------------------------------------------------------*/
@@ -114,7 +122,86 @@ c_runtime_cpu_setup:
  *
  *************************************************************************
  */
+#ifdef CONFIG_MINI2440_ASM_PRINT
+print_init_log:
 
+/*init uart io*/
+	ldr	r0, =0x56000070
+	ldr	r1, =0x002AFAAA
+	str	r1, [r0]
+
+	ldr	r0, =0x56000078
+	ldr	r1, =0x000007FF
+	str	r1, [r0]
+
+#define MINI2440_ULCON0 0x50000000
+#define MINI2440_UCON0 0x50000004
+#define MINI2440_UFCON0 0x50000008
+#define MINI2440_UMCON0 0x5000000c
+#define MINI2440_UBRDIV0 0x50000028
+
+/*init uart controller*/
+	ldr r0,=MINI2440_ULCON0
+	ldr r1,=0x3
+	str r1,[r0]
+
+	ldr r0,=MINI2440_UCON0
+	ldr r1,=0x245
+	str r1,[r0]
+
+	ldr r0,=MINI2440_UFCON0
+	ldr r1,=0x1
+	str r1,[r0]
+
+	ldr r0,=MINI2440_UMCON0
+	ldr r1,=0x0
+	str r1,[r0]
+
+	ldr r0,=MINI2440_UBRDIV0
+	ldr r1,=0x1a
+	str r1,[r0]
+
+/*send char to tx buffer*/
+	ldr	r0, =0x50000020
+
+	ldr	r1,='T'
+	str r1, [r0]
+
+	ldr	r1, ='h'
+	str r1, [r0]
+
+	ldr	r1, ='i'
+	str r1, [r0]
+
+	ldr	r1, ='s'
+	str r1, [r0]
+
+	ldr	r1, =' '
+	str r1, [r0]
+
+	ldr	r1, ='i'
+	str r1, [r0]
+
+	ldr r1, ='s'
+	str r1, [r0]
+
+	ldr	r1, =' '
+	str r1, [r0]
+
+	ldr	r1, ='l'
+	str r1, [r0]
+
+	ldr	r1, ='o'
+	str r1, [r0]
+
+	ldr	r1, ='g'
+	str r1, [r0]
+
+	ldr	r1, ='.'
+	str r1, [r0]
+
+	mov pc, lr
+#endif
 
 #ifndef CONFIG_SKIP_LOWLEVEL_INIT
 cpu_init_crit:

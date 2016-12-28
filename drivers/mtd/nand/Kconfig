@@ -11,6 +11,18 @@ config NAND_DENALI
 	select SYS_NAND_SELF_INIT
 	help
 	  Enable support for the Denali NAND controller.
+config NAND_S3C2440
+	bool "Support S3C2440 NAND controller"
+	select SYS_S3C2440_NAND_HWECC
+choice
+        prompt "select Hardware ECC"
+        depends on NAND_S3C2440
+        default SYS_S3C2440_NAND_HWECC
+
+config SYS_S3C2440_NAND_HWECC
+	bool "support hardware NAND ECC"
+
+endchoice
 
 config SYS_NAND_DENALI_64BIT
 	bool "Use 64-bit variant of Denali NAND controller"
