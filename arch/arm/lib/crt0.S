@@ -160,8 +160,10 @@ clbss_l:cmp	r0, r1			/* while not at end of BSS */
 #endif
 
 #if ! defined(CONFIG_SPL_BUILD)
+/*
 	bl coloured_LED_init
 	bl red_led_on
+*/
 #endif
 	/* call board_init_r(gd_t *id, ulong dest_addr) */
 	mov     r0, r9                  /* gd_t */
